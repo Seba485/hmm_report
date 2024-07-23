@@ -439,8 +439,8 @@ function [] = HMM_report(folder_path, show)
                     ylim(y_lim);
                     xlabel('sec')
                     ylabel('prob')
-                    title('Exponential framework output with hit and miss trial')
-                    legend(task_name{1},'rest',task_name{2},'miss','hit')
+                    title('Exponential framework output')
+                    legend(task_name{1},'rest',task_name{2},'miss', 'hit')
                     
                     win_count = win_count +1;
                     figure(win_count)
