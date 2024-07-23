@@ -162,6 +162,7 @@ function [] = HMM_report(folder_path, show)
             hold on
             plot(base,task1.hmm_state,'b-','LineWidth',2)
             ylim(y_lim)
+            grid on
             title(task_name{1})
         
             subplot(132)
@@ -169,6 +170,7 @@ function [] = HMM_report(folder_path, show)
             hold on
             plot(base,task2.hmm_state,'r-','LineWidth',2)
             ylim(y_lim)
+            grid on
             title(task_name{2})
         
             subplot(133)
@@ -176,6 +178,7 @@ function [] = HMM_report(folder_path, show)
             hold on
             plot(base,rest.hmm_state,'g-','LineWidth',2)
             ylim(y_lim)
+            grid on
             title('rest')
         end
     end
@@ -237,6 +240,7 @@ function [] = HMM_report(folder_path, show)
             hold on
             plot(base,task1.hmm_state,'b-','LineWidth',2)
             ylim(y_lim)
+            grid on
             title(task_name{1})
         
             subplot(122)
@@ -244,6 +248,7 @@ function [] = HMM_report(folder_path, show)
             hold on
             plot(base,task2.hmm_state,'r-','LineWidth',2)
             ylim(y_lim)
+            grid on
             title(task_name{2})
         
             figure(5)
@@ -368,13 +373,16 @@ function [] = HMM_report(folder_path, show)
                     data.label = [data.label; repelem(trial.label(k),trial.len(k))'];
                 end
                 trial.n = length(trial.label);
-                length(data.label)
+                
                 %---------------------------------------------------------------------------
                 %data.label = array with all the lable for ach time point
                 %trial = struct with .label, .idx (subset of idx for the trial),
                 %.start(flag of trial start), .pos, .typ, .dur, .len(lenght per trial)
-
-                %devo prendere i solo id dati dei trial e non tutti......
+                
+                %taking only the relevant idx (cue-->end of cf)
+                smr_out = smr_out(trial.idx,:);
+                hmm_out = hmm_out(trial.idx,:);
+                exp_out = exp_out(trial.idx,:);
     
                 time_base = [1:length(hmm_out)]/f;
                 label_plot(data.label==classes(1)) = 0.9;
@@ -399,10 +407,10 @@ function [] = HMM_report(folder_path, show)
                     legend('raw smr output',task_name{1},'rest',task_name{2})
     
                     subplot(312)
-                    plot(time_base, hmm_out(:,1), 'b.','LineWidth',0.5)
+                    plot(time_base(data.label==classes(1)), hmm_out(data.label==classes(1),1), 'b.','LineWidth',0.5)
                     hold on
-                    plot(time_base, hmm_out(:,2), 'g.','LineWidth',0.5)
-                    plot(time_base, hmm_out(:,3), 'r.','LineWidth',0.5)
+                    plot(time_base(data.label==classes(2)), hmm_out(data.label==classes(2),2), 'g.','LineWidth',0.5)
+                    plot(time_base(data.label==classes(3)), hmm_out(data.label==classes(3),3), 'r.','LineWidth',0.5)
                     hold off       
                     xlim([time_base(1), time_base(end)])
                     ylim(y_lim);
@@ -414,18 +422,18 @@ function [] = HMM_report(folder_path, show)
                     subplot(313)
                     plot(time_base(data.label==classes(1)), label_plot(data.label==classes(1)), 'b.','LineWidth',2)
                     hold on
-                    plot(time_base(data.label==classes(3)), label_plot(data.label==classes(3)), 'r.','LineWidth',2)
                     plot(time_base(data.label==classes(2)), label_plot(data.label==classes(2)), 'g.','LineWidth',2)
-                    plot(time_base, exp_out(:,1),'b-','LineWidth',1)
-                    plot(time_base, exp_out(:,2),'g-','LineWidth',1)
-                    plot(time_base, exp_out(:,3),'r-','LineWidth',1)
+                    plot(time_base(data.label==classes(3)), label_plot(data.label==classes(3)), 'r.','LineWidth',2)
+                    plot(time_base(data.label==classes(1)), exp_out(data.label==classes(1),1),'b.','LineWidth',1)
+                    plot(time_base(data.label==classes(2)), exp_out(data.label==classes(2),2),'g.','LineWidth',1)
+                    plot(time_base(data.label==classes(3)), exp_out(data.label==classes(3),3),'r.','LineWidth',1)
                     hold off       
                     xlim([time_base(1), time_base(end)])
                     ylim(y_lim);
                     xlabel('sec')
                     ylabel('prob')
                     title('Exponential framework output')
-                    legend('raw smr output',task_name{1},'rest',task_name{2})
+                    legend(task_name{1},'rest',task_name{2})
     
                     figure()
                     sgtitle(join(['Accuracy mode: '+keyWords.eval_T(mode)]))
@@ -456,7 +464,7 @@ function [] = HMM_report(folder_path, show)
     accuracy.T_1 = acc_vect{2};
     accuracy.T_2 = acc_vect{3};
 
-    save("HMM_report.mat","info","accuracy");
+    save(join([folder_path, "/HMM_report.mat"],""),"info","accuracy");
 end
 
 
