@@ -10,7 +10,7 @@ function [] = HMM_state()
     task2.hmm_state = hmm_state(base,'task_2');
     rest.hmm_state = hmm_state(base,'rest');
 
-    y_lim = [0 12];
+    y_lim = [0 15];
     figure()
     sgtitle('HMM state')
     subplot(131)

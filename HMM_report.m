@@ -32,18 +32,21 @@ function [] = HMM_report(folder_path, show)
     no_T.t2 = [];
     no_T.rest = [];
     no_T.overall = [];
+    no_T.confusion = {};
     
     T_1.info = "hmm evaluation only the cue direction free [run 1, ..., run n, avg]";
     T_1.t1 = [];
     T_1.t2 = [];
     T_1.rest = [];
     T_1.overall = [];
+    no_T.confusion = {};
     
     T_2.info = "hmm evaluation 2 direction free, the cue one and randomically an other one [run 1, ..., run n, avg]";
     T_2.t1 = [];
     T_2.t2 = [];
     T_2.rest = [];
     T_2.overall = [];
+    no_T.confusion = {};
     
     acc_vect = {no_T, T_1, T_2}; %same order of keyWords.eval_T
     
@@ -137,14 +140,19 @@ function [] = HMM_report(folder_path, show)
         task1.hmm_state = hmm_state(base,'task_1');%,'param',param);
         task2.hmm_state = hmm_state(base,'task_2');
         rest.hmm_state = hmm_state(base,'rest');
+        %normalization
+        norm_factor = max(task1.hmm_state);
+        task1.hmm_state = task1.hmm_state/norm_factor;%,'param',param);
+        task2.hmm_state = task2.hmm_state/norm_factor;
+        rest.hmm_state = rest.hmm_state/norm_factor;
         
         if show==true
             y_lim = [0 1];
             figure(1)
             plot(time_base, raw_prob_cal(:,1),'ko','MarkerFaceColor','k','MarkerSize',0.5)
             hold on
-            plot(time_base(data_cal.label==task(1)), label_plot(data_cal.label==task(1)), 'b.','LineWidth',2)
-            plot(time_base(data_cal.label==task(2)), label_plot(data_cal.label==task(2)), 'r.','LineWidth',2)
+            plot(time_base(data_cal.label==task(1)), label_plot(data_cal.label==task(1)), 'r.','LineWidth',2)
+            plot(time_base(data_cal.label==task(2)), label_plot(data_cal.label==task(2)), 'b.','LineWidth',2)
             plot(time_base(data_cal.label==CODE.Rest), label_plot(data_cal.label==CODE.Rest), 'g.','LineWidth',2)
             hold off
             xlim([time_base(1), time_base(end)])
@@ -153,33 +161,35 @@ function [] = HMM_report(folder_path, show)
             ylabel('prob')
             title('Calibration output '+features_string)
             legend('raw trn output',task_name{1},task_name{2},'rest')
+            legend('FontSize',15)
+            set(gca, 'FontSize',15,'LineWidth',2)
             
-            y_lim = [0 12];
+            
             figure(2)
             sgtitle('Data distribution Calibration - HMM state')
             subplot(131)
-            histogram(raw_prob_cal(data_cal.label==task(1),1),100,'Normalization',"pdf",'FaceColor',"#0072BD")
+            histogram(raw_prob_cal(data_cal.label==task(1),1),100,'Normalization',"probability",'FaceColor',"#D95319")
             hold on
-            plot(base,task1.hmm_state,'b-','LineWidth',2)
-            ylim(y_lim)
+            plot(base,task1.hmm_state,'r-','LineWidth',2)
             grid on
             title(task_name{1})
+            set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(132)
-            histogram(raw_prob_cal(data_cal.label==task(2),1),100,'Normalization',"pdf",'FaceColor',"#D95319")
+            histogram(raw_prob_cal(data_cal.label==task(2),1),100,'Normalization',"probability",'FaceColor',"#0072BD")
             hold on
-            plot(base,task2.hmm_state,'r-','LineWidth',2)
-            ylim(y_lim)
+            plot(base,task2.hmm_state,'b-','LineWidth',2)
             grid on
             title(task_name{2})
+            set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(133)
-            histogram(raw_prob_cal(data_cal.label==CODE.Rest,1),100,'Normalization',"pdf",'FaceColor',"#77AC30")
+            histogram(raw_prob_cal(data_cal.label==CODE.Rest,1),100,'Normalization',"probability",'FaceColor',"#77AC30")
             hold on
             plot(base,rest.hmm_state,'g-','LineWidth',2)
-            ylim(y_lim)
             grid on
             title('rest')
+            set(gca, 'FontSize',15,'LineWidth',2)
         end
     end
     
@@ -199,7 +209,6 @@ function [] = HMM_report(folder_path, show)
         accuracy.binary.t1 = 100*sum(hit_miss(trial_eval.label==task(1))==CODE.Target_hit)/sum(trial_eval.label==task(1));
         accuracy.binary.t2 = 100*sum(hit_miss(trial_eval.label==task(2))==CODE.Target_hit)/sum(trial_eval.label==task(2));
         
-        
         %% Distribution and Visual
         
         time_base = [0:length(data_eval.data)-1]/data_eval.f;
@@ -215,14 +224,19 @@ function [] = HMM_report(folder_path, show)
         task1.hmm_state = hmm_state(base,'task_1');%,'param',param);
         task2.hmm_state = hmm_state(base,'task_2');
         rest.hmm_state = hmm_state(base,'rest');
+        %normalization
+        norm_factor = max(task1.hmm_state);
+        task1.hmm_state = task1.hmm_state/norm_factor;%,'param',param);
+        task2.hmm_state = task2.hmm_state/norm_factor;
+        rest.hmm_state = rest.hmm_state/norm_factor;
         
         if show==true
             y_lim = [0 1];
             figure(3)
             plot(time_base, raw_prob_eval(:,1),'ko','MarkerFaceColor','k','MarkerSize',0.5)
             hold on
-            plot(time_base(data_eval.label==task(1)), label_plot(data_eval.label==task(1)), 'b.','LineWidth',2)
-            plot(time_base(data_eval.label==task(2)), label_plot(data_eval.label==task(2)), 'r.','LineWidth',2)
+            plot(time_base(data_eval.label==task(1)), label_plot(data_eval.label==task(1)), 'r.','LineWidth',2)
+            plot(time_base(data_eval.label==task(2)), label_plot(data_eval.label==task(2)), 'b.','LineWidth',2)
             %plot(time_base(data_eval.label==CODE.Rest), label_plot(data_eval.label==CODE.Rest), 'g.','LineWidth',2)
             hold off
             xlim([time_base(1), time_base(end)])
@@ -231,25 +245,26 @@ function [] = HMM_report(folder_path, show)
             ylabel('prob')
             title('Evaluation output')
             legend('raw tst output',task_name{1},task_name{2})
+            legend('FontSize',15)
+            set(gca, 'FontSize',15,'LineWidth',2)
             
-            y_lim = [0 12];
             figure(4)
             sgtitle('Data distribution Evaluation')
             subplot(121)
-            histogram(raw_prob_eval(data_eval.label==task(1),1),100,'Normalization',"pdf",'FaceColor',"#0072BD")
+            histogram(raw_prob_eval(data_eval.label==task(1),1),100,'Normalization',"probability",'FaceColor',"#D95319")
             hold on
-            plot(base,task1.hmm_state,'b-','LineWidth',2)
-            ylim(y_lim)
+            plot(base,task1.hmm_state,'r-','LineWidth',2)
             grid on
             title(task_name{1})
+            set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(122)
-            histogram(raw_prob_eval(data_eval.label==task(2),1),100,'Normalization',"pdf",'FaceColor',"#D95319")
+            histogram(raw_prob_eval(data_eval.label==task(2),1),100,'Normalization',"probability",'FaceColor',"#0072BD")
             hold on
-            plot(base,task2.hmm_state,'r-','LineWidth',2)
-            ylim(y_lim)
+            plot(base,task2.hmm_state,'b-','LineWidth',2)
             grid on
             title(task_name{2})
+            set(gca, 'FontSize',15,'LineWidth',2)
         
             figure(5)
             bar([1:3], [accuracy.binary.overall, accuracy.binary.t1, accuracy.binary.t2])
@@ -258,6 +273,7 @@ function [] = HMM_report(folder_path, show)
             ylim([0 100])
             title('Binary evaluation accuracy')
             grid on
+            set(gca, 'FontSize',15,'LineWidth',2)
         
         end
     end
@@ -296,6 +312,7 @@ function [] = HMM_report(folder_path, show)
                     hmm{j} = readMessages(select(bag,"Topic", '/hmm/neuroprediction'),'DataFormat','struct');
                     exp{j} = readMessages(select(bag,"Topic", '/integrator/neuroprediction'),'DataFormat','struct');
                     T{j} = readMessages(select(bag,"Topic", '/traversability_output_topic'),'DataFormat','struct'); %useless for the moment
+                    hit_class{j} = readMessages(select(bag,"Topic", '/bar_feedback/targethit'),'DataFormat','struct');
                 end
             end
         end
@@ -325,6 +342,8 @@ function [] = HMM_report(folder_path, show)
                 acc_vect{mode}.t1(run) = 100*sum(hit_miss(trial_class==task(1))==CODE.Target_hit)/sum(trial_class==task(1));
                 acc_vect{mode}.t2(run) = 100*sum(hit_miss(trial_class==task(2))==CODE.Target_hit)/sum(trial_class==task(2));
                 acc_vect{mode}.rest(run) = 100*sum(hit_miss(trial_class==CODE.Rest)==CODE.Target_hit)/sum(trial_class==CODE.Rest);
+                
+
             end
             %compute the average accuracy
             k = run+1;
@@ -344,18 +363,50 @@ function [] = HMM_report(folder_path, show)
                 trial.DUR = [];
                  
                 classes = hmm{1}{1}.Decoder.Classes; %should be class_1, rest, class_2
+                n_class = length(classes);
 
+                confusion_matrix{n_run+1} = zeros(n_class,n_class+1);
                 for run = 1:n_run
+                    %confusion matrix
+                    hit_class_vect = [];
+                    for k = 1:length(hit_class{run})
+                        hit_class_vect = [hit_class_vect; hit_class{run}{k}.Data.Data];
+                    end
+                    if ~isempty(hit_class)
+                        confusion_matrix{run} = [sum(trial_class(hit_class_vect==task(1))==task(1)), sum(trial_class(hit_class_vect==task(2))==task(1)), sum(trial_class(hit_class_vect==CODE.Rest)==task(1)), sum(trial_class(hit_class_vect==-1)==task(1));
+                                            sum(trial_class(hit_class_vect==task(1))==task(2)), sum(trial_class(hit_class_vect==task(2))==task(2)), sum(trial_class(hit_class_vect==CODE.Rest)==task(2)), sum(trial_class(hit_class_vect==-1)==task(2));
+                                            sum(trial_class(hit_class_vect==task(1))==CODE.Rest), sum(trial_class(hit_class_vect==task(2))==CODE.Rest), sum(trial_class(hit_class_vect==CODE.Rest)==CODE.Rest), sum(trial_class(hit_class_vect==-1)==CODE.Rest)];
+
+                        acc_vect{mode}.confusion{run} = array2table(confusion_matrix{run},"RowNames",["task_1","task_2","rest"],"VariableNames",["task_1","task_2","rest","missed"]);
+                        
+                        confusion_matrix{n_run+1} = confusion_matrix{n_run+1} + confusion_matrix{run}; 
+                        
+                        acc_vect{mode}.confusion{n_run+1} = array2table(confusion_matrix{n_run+1},"RowNames",["task_1","task_2","rest"],"VariableNames",["task_1","task_2","rest","missed"]);
+                        disp('confusion matrix ' +string(run)+ ' run')
+                        disp(acc_vect{mode}.confusion{run})
+                    end
+                    
+                    %points
                     for k = 1:length(hmm{run})
-                        smr_out = [smr_out; (smrbci{run}{k}.Softpredict.Data)'];
-                        hmm_out = [hmm_out; (hmm{run}{k}.Softpredict.Data)'];
-                        exp_out = [exp_out; (exp{run}{k}.Softpredict.Data)'];
+                        try
+                            smr_out = [smr_out; (smrbci{run}{k}.Softpredict.Data)'];
+                            hmm_out = [hmm_out; (hmm{run}{k}.Softpredict.Data)'];
+                            exp_out = [exp_out(); (exp{run}{k}.Softpredict.Data)'];
+                        catch
+                            smr_out = [smr_out; smr_out(end,:)];
+                            hmm_out = [hmm_out; hmm_out(end,:)];
+                            exp_out = [exp_out(); exp_out(end,:)];
+                        end
                     end
                     trial.POS = [trial.POS; trial.POS(end)+h_PSD{run}.EVENT.POS]; 
                     trial.TYP = [trial.TYP; h_PSD{run}.EVENT.TYP];
                     trial.DUR = [trial.DUR; h_PSD{run}.EVENT.DUR];
                 end
                 trial.POS(1) = [];
+                disp('total confusion matrix')
+                disp(acc_vect{mode}.confusion{n_run+1})
+
+                
                 %------------------------------------------------------------------------------
                 trial_start = trial.POS(trial.TYP==classes(1) | trial.TYP==classes(2) | trial.TYP==classes(3)); %cue
                 trial_end = trial.POS(trial.TYP==CODE.Continuous_feedback) + trial.DUR(trial.TYP==CODE.Continuous_feedback); %end of continuous feedback
@@ -383,20 +434,47 @@ function [] = HMM_report(folder_path, show)
                 %.end(flag of trial end), .outcome(target hit or miss), .pos, .typ, .dur, .len(lenght per trial)
                 
                 %taking only the relevant idx (cue-->end of cf)
-                smr_out = smr_out(trial.idx,:);
-                hmm_out = hmm_out(trial.idx,:);
-                exp_out = exp_out(trial.idx,:);
+                try
+                    smr_out = smr_out(trial.idx,:);
+                    hmm_out = hmm_out(trial.idx,:);
+                    exp_out = exp_out(trial.idx,:);
+                catch %if there are some rpoblem with the recordings
+                    smr_out(trial.idx(end),:) = [0,0];
+                    smr_out = smr_out(trial.idx(find(trial.idx<=length(smr_out))),:);
+                    hmm_out(trial.idx(end),:) = [0,0,0];
+                    hmm_out = hmm_out(trial.idx(find(trial.idx<=length(hmm_out))),:);
+                    exp_out(trial.idx(end),:) = [0,0,0];
+                    exp_out = exp_out(trial.idx(find(trial.idx<=length(exp_out))),:);
+                end
     
                 time_base = [1:length(hmm_out)]/f;
                 label_plot(data.label==classes(1)) = 0.9;
                 label_plot(data.label==classes(3)) = 0.1;
                 label_plot(data.label==classes(2)) = 0.5;
-
+    
+                %from this point ahead everything is related to the hmm_out
+                %length due to the possibility of differents length in the
+                %recordings (if the recordings stop in an anomalous way they are cut and shorted respect to the gdf file)
                 time_base_trial_end = time_base(trial.end==1);
-                time_base_hit = time_base_trial_end(trial.outcome==CODE.Target_hit);
-                time_base_miss = time_base_trial_end(trial.outcome==CODE.Target_miss);
+                time_base_hit = time_base_trial_end(trial.outcome==CODE.Target_hit)';
+                time_base_miss = time_base_trial_end(trial.outcome==CODE.Target_miss)';
 
                 if show==true
+                    base = [0:0.01:1]';
+                    % A =
+                    % B = 
+                    % A_1 = 
+                    % B_1 = 
+                    %param = [A, B, A_1, B_1];
+                    task1.hmm_state = hmm_state(base,'task_1');%,'param',param);
+                    task2.hmm_state = hmm_state(base,'task_2');
+                    rest.hmm_state = hmm_state(base,'rest');
+                    %normalization
+                    norm_factor = max(task1.hmm_state);
+                    task1.hmm_state = task1.hmm_state/norm_factor;%,'param',param);
+                    task2.hmm_state = task2.hmm_state/norm_factor;
+                    rest.hmm_state = rest.hmm_state/norm_factor;
+
                     y_lim = [0 1];
                     win_count = win_count + 1;
                     figure(win_count)
@@ -404,8 +482,8 @@ function [] = HMM_report(folder_path, show)
                     plot(time_base, smr_out(:,1),'ko','MarkerFaceColor','k','MarkerSize',0.5)
                     hold on
                     plot(time_base(data.label==classes(1)), label_plot(data.label==classes(1)), 'b.','LineWidth',2)
-                    plot(time_base(data.label==classes(3)), label_plot(data.label==classes(3)), 'r.','LineWidth',2)
                     plot(time_base(data.label==classes(2)), label_plot(data.label==classes(2)), 'g.','LineWidth',2)
+                    plot(time_base(data.label==classes(3)), label_plot(data.label==classes(3)), 'r.','LineWidth',2)
                     hold off
                     xlim([time_base(1), time_base(end)])
                     ylim(y_lim);
@@ -413,6 +491,8 @@ function [] = HMM_report(folder_path, show)
                     ylabel('prob')
                     title(join(['Evaluation mode: ',keyWords.eval_T(mode)]))
                     legend('raw smr output',task_name{1},'rest',task_name{2})
+                    legend('FontSize',15)
+                    set(gca, 'FontSize',15,'LineWidth',2)
     
                     subplot(312)
                     plot(time_base(data.label==classes(1)), hmm_out(data.label==classes(1),1), 'b.','LineWidth',0.5)
@@ -426,21 +506,56 @@ function [] = HMM_report(folder_path, show)
                     ylabel('prob')
                     title('HMM raw probability output per state')
                     legend(task_name{1},'rest',task_name{2})
+                    legend('FontSize',15)
+                    set(gca, 'FontSize',15,'LineWidth',2)
     
                     subplot(313)
-                    plot(time_base(data.label==classes(1)), exp_out(data.label==classes(1),1),'b.','LineWidth',1)
+                    h1 = plot(time_base(data.label==classes(1)), exp_out(data.label==classes(1),1),'b.','LineWidth',1);
                     hold on
-                    plot(time_base(data.label==classes(2)), exp_out(data.label==classes(2),2),'g.','LineWidth',1)
-                    plot(time_base(data.label==classes(3)), exp_out(data.label==classes(3),3),'r.','LineWidth',1)
-                    stem(time_base_miss, ones(length(time_base_miss)),'Marker','none','Color','#A2142F','LineWidth',0.8)
-                    stem(time_base_hit, ones(length(time_base_hit)),'Marker','none','Color','#77AC30','LineWidth',0.8)
+                    h2 = plot(time_base(data.label==classes(2)), exp_out(data.label==classes(2),2),'g.','LineWidth',1);
+                    h3 = plot(time_base(data.label==classes(3)), exp_out(data.label==classes(3),3),'r.','LineWidth',1);
+                    stem(time_base_miss, ones(length(time_base_miss)),'Marker','none','Color','#A2142F','LineWidth',0.8);
+                    h4 = plot(nan, nan, 'Color','#A2142F');
+                    stem(time_base_hit, ones(length(time_base_hit)),'Marker','none','Color','#77AC30','LineWidth',0.8);
+                    h5 = plot(nan, nan, 'Color','#77AC30');
                     hold off       
                     xlim([time_base(1), time_base(end)])
                     ylim(y_lim);
                     xlabel('sec')
                     ylabel('prob')
                     title('Exponential framework output with hit and miss trial')
-                    legend(task_name{1},'rest',task_name{2},'miss','hit')
+                    legend([h1 h2 h3 h4 h5],{task_name{1},'rest',task_name{2},'Miss','Hit'})
+                    legend('FontSize',15)
+                    set(gca, 'FontSize',15,'LineWidth',2)
+
+                    
+                    win_count = win_count + 1;
+                    figure(win_count)
+                    sgtitle(join(['Evaluation mode: ',keyWords.eval_T(mode),' hmm state']))
+                    subplot(131)
+                    histogram(smr_out(data.label==classes(1),1),100,'Normalization',"probability",'FaceColor',"#D95319")
+                    hold on
+                    plot(base,task1.hmm_state,'r-','LineWidth',2)
+                    grid on
+                    title(classes(1))
+                    set(gca, 'FontSize',15,'LineWidth',2)
+                
+                    subplot(132)
+                    histogram(smr_out(data.label==classes(3),1),100,'Normalization',"probability",'FaceColor',"#0072BD")
+                    hold on
+                    plot(base,task2.hmm_state,'b-','LineWidth',2)
+                    grid on
+                    title(classes(3))
+                    set(gca, 'FontSize',15,'LineWidth',2)
+                
+                    subplot(133)
+                    histogram(smr_out(data.label==classes(2),1),100,'Normalization',"probability",'FaceColor',"#77AC30")
+                    hold on
+                    plot(base,rest.hmm_state,'g-','LineWidth',2)
+                    grid on
+                    title(classes(2))
+                    set(gca, 'FontSize',15,'LineWidth',2)
+
                     
                     win_count = win_count +1;
                     figure(win_count)
@@ -453,6 +568,7 @@ function [] = HMM_report(folder_path, show)
                         ylim([0 100])
                         title('Run: '+string(run))
                         grid on
+                        set(gca, 'FontSize',15,'LineWidth',2)
                     end
                     k = run+1;
                     subplot(1, n_run+1, k)
@@ -462,6 +578,7 @@ function [] = HMM_report(folder_path, show)
                     ylim([0 100])
                     title('Average')
                     grid on
+                    set(gca, 'FontSize',15,'LineWidth',2)
     
                 end
             end
