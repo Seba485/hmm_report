@@ -173,6 +173,7 @@ function [] = HMM_report(folder_path, show)
             plot(base,task1.hmm_state,'r-','LineWidth',2)
             grid on
             title(task_name{1})
+            ylim(y_lim)
             set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(132)
@@ -181,6 +182,7 @@ function [] = HMM_report(folder_path, show)
             plot(base,task2.hmm_state,'b-','LineWidth',2)
             grid on
             title(task_name{2})
+            ylim(y_lim)
             set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(133)
@@ -189,6 +191,7 @@ function [] = HMM_report(folder_path, show)
             plot(base,rest.hmm_state,'g-','LineWidth',2)
             grid on
             title('rest')
+            ylim(y_lim)
             set(gca, 'FontSize',15,'LineWidth',2)
         end
     end
@@ -256,6 +259,7 @@ function [] = HMM_report(folder_path, show)
             plot(base,task1.hmm_state,'r-','LineWidth',2)
             grid on
             title(task_name{1})
+            ylim(y_lim)
             set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(122)
@@ -264,6 +268,7 @@ function [] = HMM_report(folder_path, show)
             plot(base,task2.hmm_state,'b-','LineWidth',2)
             grid on
             title(task_name{2})
+            ylim(y_lim)
             set(gca, 'FontSize',15,'LineWidth',2)
         
             figure(5)
@@ -272,6 +277,7 @@ function [] = HMM_report(folder_path, show)
             ylabel('Accuracy %')
             ylim([0 100])
             title('Binary evaluation accuracy')
+            ylim(y_lim)
             grid on
             set(gca, 'FontSize',15,'LineWidth',2)
         
@@ -538,6 +544,7 @@ function [] = HMM_report(folder_path, show)
                     plot(base,task1.hmm_state,'r-','LineWidth',2)
                     grid on
                     title(classes(1))
+                    ylim(y_lim)
                     set(gca, 'FontSize',15,'LineWidth',2)
                 
                     subplot(132)
@@ -546,6 +553,7 @@ function [] = HMM_report(folder_path, show)
                     plot(base,task2.hmm_state,'b-','LineWidth',2)
                     grid on
                     title(classes(3))
+                    ylim(y_lim)
                     set(gca, 'FontSize',15,'LineWidth',2)
                 
                     subplot(133)
@@ -554,6 +562,7 @@ function [] = HMM_report(folder_path, show)
                     plot(base,rest.hmm_state,'g-','LineWidth',2)
                     grid on
                     title(classes(2))
+                    ylim(y_lim)
                     set(gca, 'FontSize',15,'LineWidth',2)
 
                     
