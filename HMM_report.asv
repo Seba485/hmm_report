@@ -384,13 +384,13 @@ function [] = HMM_report(folder_path, show)
                         %task = [773 771] output of the static classifier
                         confusion_matrix{run} = [sum(trial_class(hit_class_vect==classes(1))==classes(1)), sum(trial_class(hit_class_vect==classes(2))==classes(1)), sum(trial_class(hit_class_vect==classes(3))==classes(1)), sum(trial_class(hit_class_vect==-1)==classes(1));
                                             sum(trial_class(hit_class_vect==classes(1))==classes(2)), sum(trial_class(hit_class_vect==classes(2))==classes(2)), sum(trial_class(hit_class_vect==classes(3))==classes(2)), sum(trial_class(hit_class_vect==-1)==classes(2));
-                                            sum(trial_class(hit_class_vect==classes(1))==classes(3)), sum(trial_class(hit_class_vect==classes(2))==classes(3)), sum(trial_class(hit_class_vect==classes(3))==classes(3)), sum(trial_class(hit_class_vect==-1)==classes(3))];
-                        
-                        acc_vect{mode}.confusion{run} = array2table(confusion_matrix{run},"RowNames",string(classes)',"VariableNames",[string(classes)',"missed"]);
+                                            sum(trial_class(hit_class_vect==classes(3))==classes(3)), sum(trial_class(hit_class_vect==classes(2))==classes(3)), sum(trial_class(hit_class_vect==classes(3))==classes(3)), sum(trial_class(hit_class_vect==-1)==classes(3))];
+
+                        acc_vect{mode}.confusion{run} = array2table(confusion_matrix{run},"RowNames",["task_1","task_2","rest"],"VariableNames",["task_1","task_2","rest","missed"]);
                         
                         confusion_matrix{n_run+1} = confusion_matrix{n_run+1} + confusion_matrix{run}; 
                         
-                        acc_vect{mode}.confusion{n_run+1} = array2table(confusion_matrix{n_run+1},"RowNames",string(classes)',"VariableNames",[string(classes)',"missed"]);
+                        acc_vect{mode}.confusion{n_run+1} = array2table(confusion_matrix{n_run+1},"RowNames",["bh","bf","rest"],"VariableNames",["bh","bf","rest","missed"]);
                         disp('confusion matrix ' +string(run)+ ' run')
                         disp(acc_vect{mode}.confusion{run})
                     end
