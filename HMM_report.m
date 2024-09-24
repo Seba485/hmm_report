@@ -381,6 +381,9 @@ function [] = HMM_report(folder_path, show)
                         hit_class_vect = [hit_class_vect; hit_class{run}{k}.Data.Data];
                     end
                     if ~isempty(hit_class)
+                        hit_miss = h_PSD{run}.EVENT.TYP(h_PSD{run}.EVENT.TYP==CODE.Target_hit | h_PSD{run}.EVENT.TYP==CODE.Target_miss);
+                        trial_class = h_PSD{run}.EVENT.TYP(h_PSD{run}.EVENT.TYP==task(1) | h_PSD{run}.EVENT.TYP==task(2) | h_PSD{run}.EVENT.TYP==CODE.Rest);
+                
                         %task = [773 771] output of the static classifier
                         confusion_matrix{run} = [sum(trial_class(hit_class_vect==classes(1))==classes(1)), sum(trial_class(hit_class_vect==classes(2))==classes(1)), sum(trial_class(hit_class_vect==classes(3))==classes(1)), sum(trial_class(hit_class_vect==-1)==classes(1));
                                             sum(trial_class(hit_class_vect==classes(1))==classes(2)), sum(trial_class(hit_class_vect==classes(2))==classes(2)), sum(trial_class(hit_class_vect==classes(3))==classes(2)), sum(trial_class(hit_class_vect==-1)==classes(2));
