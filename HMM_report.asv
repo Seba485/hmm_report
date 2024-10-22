@@ -6,7 +6,6 @@ function [] = HMM_report(folder_path, show)
     % if show==true some images are shown, accuracy and info structure are
     % saved in the same folder path under the name of HMM_report.mat
     
-    
     CODE.Trial_start = 1;
     CODE.Fixation_cross = 786;
     CODE.Both_Hand = 773;
@@ -217,6 +216,8 @@ function [] = HMM_report(folder_path, show)
         
         %% Accuracy
         hit_miss = trial_eval.TYP(trial_eval.TYP==CODE.Target_hit | trial_eval.TYP==CODE.Target_miss);
+        
+        100*
 
         accuracy.binary.overall = 100*sum(hit_miss==CODE.Target_hit)/trial_eval.n;
         accuracy.binary.t1 = 100*sum(hit_miss(trial_eval.label==task(1))==CODE.Target_hit)/sum(trial_eval.label==task(1));

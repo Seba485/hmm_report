@@ -1,297 +1,355 @@
 clear all
 close all
 
-subject_vect = ["C7", "G2", "D6"];
+root_folder = "/home/sebastiano/Desktop/Data";
+subjects = ["c7", "d6", "g2", "h7", "h5", "h6"];
 
-for k = 1:length(subject_vect)
- subject = subject_vect(k);
+target_file = 'HMM_report.mat';
 
-switch subject
-    case 'C7'
-        data.no_t = [53.33 53.33 41.66 58.33];
-        data.t_1 = [58.33 55 70 50];
-        data.t_2 = [86.67 73.33 63.33 51.11];
-    case 'D6'
-        data.no_t = [52.38 60 61.66 50];
-        data.t_1 = [61.9 56.66 48.33 50];
-        data.t_2 = [83.33 73.33 76.67 68.33];
-    case 'G2'
-        data.no_t = [46.67 51.67 48.33 53.33];
-        data.t_1 = [51.67 51.67 48.33 40];
-        data.t_2 = [66.67 70 66.67 75];
-end
+no_T = []; %for the across subjects accuracy
+T_1 = [];
+T_2 = [];
 
-dev.no_t = std(data.no_t);
-dev.t_1 = std(data.t_1);
-dev.t_2 = std(data.t_2);
+for n = 1:length(subjects)
 
-dev_vect = [dev.no_t, dev.t_1, dev.t_2];
-
-m.no_t = mean(data.no_t);
-m.t_1 = mean(data.t_1);
-m.t_2 = mean(data.t_2);
-
-mean_vect = [m.no_t, m.t_1, m.t_2];
-
-
-base = [1,2,3]; 
-
-[min_mean, min_mean_idx] = min(mean_vect);
-min_limit = min_mean-dev_vect(min_mean_idx);
-[max_mean, max_mean_idx] = max(mean_vect);
-max_limit = max_mean+dev_vect(max_mean_idx);
-
-figure(k)
-plot(base,mean_vect,'o','MarkerFaceColor','b','MarkerSize',7)
-hold on
-plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
-plot([base(1),base(1)], [mean_vect(1)-dev_vect(1), mean_vect(1)+dev_vect(1)],'Color','k' ,'Marker','_','LineWidth',2)
-text(base(1),35,[num2str(mean_vect(1),'%.2f') ' \pm ' num2str(dev_vect(1),'%.2f') ],'FontSize',13,'HorizontalAlignment', 'center')
-plot([base(2),base(2)], [mean_vect(2)-dev_vect(2), mean_vect(2)+dev_vect(2)],'Color','k' ,'Marker','_','LineWidth',2)
-text(base(2),35,[num2str(mean_vect(2),'%.2f') ' \pm ' num2str(dev_vect(2),'%.2f') ],'FontSize',13,'HorizontalAlignment', 'center')
-plot([base(3),base(3)], [mean_vect(3)-dev_vect(3), mean_vect(3)+dev_vect(3)],'Color','k' ,'Marker','_','LineWidth',2)
-text(base(3),35,[num2str(mean_vect(3),'%.2f') ' \pm ' num2str(dev_vect(3),'%.2f') ],'FontSize',13,'HorizontalAlignment', 'center')
-hold off
-
-xlim([0.7 3.3])
-ylim([0 100])
-%ylim([min_limit*0.9, max_limit*1.1])
-ylabel('Accuracy [%]')
-xlabel('Modality')
-xticks(base)
-xticklabels({'T_{off}', 'T_1', 'T_2'})
-ax = gca;
-ax.YGrid = 'on';
-
-title(subject + " overall accuracy")
-
-set(gca, 'FontSize',15,'LineWidth',2)
-
-end
-
-%% mean among the subjects
-
-
-% data.no_t = [53.33 53.33 41.66 58.33];
-% data.t_1 = [58.33 55 70 50];
-% data.t_2 = [86.67 73.33 63.33 51.11];
-
-%d6
-% data.no_t = [52.38 60 61.66 50];
-% data.t_1 = [61.9 56.66 48.33 50];
-% data.t_2 = [83.33 73.33 76.67 68.33];
-
-%g2
-data.no_t = [46.67 51.67 48.33 53.33 53.33 53.33 41.66 58.33 52.38 60 61.66 50];
-data.t_1 = [51.67 51.67 48.33 40 58.33 55 70 50 61.9 56.66 48.33 50];
-data.t_2 = [66.67 70 66.67 75 86.67 73.33 63.33 51.11 83.33 73.33 76.67 68.33];
-
-subject='Across subjects';
-
-dev.no_t = std(data.no_t);
-dev.t_1 = std(data.t_1);
-dev.t_2 = std(data.t_2);
-
-dev_vect = [dev.no_t, dev.t_1, dev.t_2];
-
-m.no_t = mean(data.no_t);
-m.t_1 = mean(data.t_1);
-m.t_2 = mean(data.t_2);
-
-mean_vect = [m.no_t, m.t_1, m.t_2];
-
-
-base = [1,2,3]; 
-
-[min_mean, min_mean_idx] = min(mean_vect);
-min_limit = min_mean-dev_vect(min_mean_idx);
-[max_mean, max_mean_idx] = max(mean_vect);
-max_limit = max_mean+dev_vect(max_mean_idx);
-
-figure(length(subject_vect)+1)
-plot(base,mean_vect,'o','MarkerFaceColor','b','MarkerSize',7)
-hold on
-plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
-plot([base(1),base(1)], [mean_vect(1)-dev_vect(1), mean_vect(1)+dev_vect(1)],'Color','k' ,'Marker','_','LineWidth',2)
-text(base(1),35,[num2str(mean_vect(1),'%.2f') ' \pm ' num2str(dev_vect(1),'%.2f') ],'FontSize',13,'HorizontalAlignment', 'center')
-plot([base(2),base(2)], [mean_vect(2)-dev_vect(2), mean_vect(2)+dev_vect(2)],'Color','k' ,'Marker','_','LineWidth',2)
-text(base(2),35,[num2str(mean_vect(2),'%.2f') ' \pm ' num2str(dev_vect(2),'%.2f') ],'FontSize',13,'HorizontalAlignment', 'center')
-plot([base(3),base(3)], [mean_vect(3)-dev_vect(3), mean_vect(3)+dev_vect(3)],'Color','k' ,'Marker','_','LineWidth',2)
-text(base(3),35,[num2str(mean_vect(3),'%.2f') ' \pm ' num2str(dev_vect(3),'%.2f') ],'FontSize',13,'HorizontalAlignment', 'center')
-hold off
-
-xlim([0.7 3.3])
-ylim([0 100])
-%ylim([min_limit*0.9, max_limit*1.1])
-ylabel('Accuracy [%]')
-xlabel('Modality')
-xticks(base)
-xticklabels({'T_{off}', 'T_1', 'T_2'})
-ax = gca;
-ax.YGrid = 'on';
-
-title([subject ' overall accuracy'])
-
-set(gca, 'FontSize',15,'LineWidth',2)
-
-%%
-subject_vect = ["C7", "G2", "D6"];
-
-for k = 1:length(subject_vect)
- subject = subject_vect(k);
-
-switch subject
-    case 'C7'
-        %C7
-        no_t_mat = [0.350	0.475	0.038	0.138
-            0.088	0.375	0.063	0.475
-            0.000	0.150	0.825	0.025];
-			    			            
-        t_1_mat = [0.575	0.304	0.071	0.050
-            0.118	0.458	0.091	0.333
-            0.046	0.188	0.742	0.025];
-			            
-         t_2_mat = [0.517	0.325	0.096	0.063
-            0.067	0.788	0.063	0.083
-            0.013	0.192	0.754	0.042];
-    case 'D6'
-        no_t_mat = [0.933	0.067	0.000	0.000
-        0.467	0.150	0.000	0.383
-        0.000	0.367	0.633	0.000];
-	        
-        t_1_mat = [0.917	0.067	0.000	0.017
-        0.483	0.100	0.000	0.417
-        0.000	0.383	0.533	0.083];
+    subject_folder = root_folder+'/'+subjects(n);
     
-        t_2_mat = [0.882	0.118	0.000	0.000
-        0.350	0.633	0.000	0.017
-        0.000	0.300	0.683	0.017];
-    case 'G2'
-        no_t_mat = [0.604	0.290	0.052	0.054
-        0.125	0.613	0.050	0.213
-        0.000	0.663	0.263	0.075];
-
-        t_1_mat = [0.663	0.288	0.038	0.013
-        0.150	0.488	0.013	0.350
-        0.000	0.625	0.288	0.088];
-       
-        t_2_mat = [0.800	0.125	0.075	0.000
-        0.113	0.850	0.013	0.025
-        0.000	0.535	0.440	0.025];
-end
-
-% Create a figure
-figure (k+4);
-sgtitle("Confusion matrix "+ subject)
-
-subplot(131)
-% Create a colored confusion matrix
-imagesc(no_t_mat);
-colormap(jet); % Choose a colormap, you can use 'hot', 'cool', etc.
-colorbar; % Optional: show a colorbar
-set(colorbar, 'Limits', [0, 1]);
-
-% Set the axis labels
-xlabel('Predicted Class');
-ylabel('True Class');
-title('T_{off}');
-
-% Add text in the center of each square
-[nRows, nCols] = size(no_t_mat);
-for i = 1:nRows
-    for j = 1:nCols
-        % Calculate the position to place the text
-        text(j, i, num2str(no_t_mat(i, j)), ...
-             'Color', 'white', 'FontSize', 14, ...
-             'HorizontalAlignment', 'center', ...
-             'VerticalAlignment', 'middle');
+    content = dir(subject_folder);
+    
+    confusion.no_T = zeros(3,4,1);
+    confusion.T_1 = zeros(3,4,1);
+    confusion.T_2 = zeros(3,4,1);
+    
+    overall_acc.no_T = [];
+    overall_acc.T_1 = [];
+    overall_acc.T_2 = [];
+    
+    file_found = false;
+    n_aq = 0;
+    
+    for k = 3:length(content) %skip . and ..
+        if isfolder(subject_folder+'/'+content(k).name)
+            try
+                load(subject_folder+'/'+content(k).name+'/'+target_file)
+                file_found = true;
+            catch 
+                %pass
+            end
+        else
+            if strcmp(content(k).name,target_file)
+                load(subject_folder+'/'+content(k).name)
+                file_found = true;
+            end
+        end
+        
+        if file_found
+            n_aq = n_aq + 1;
+            file_found = false;
+            
+            try
+                confusion.no_T(:,:,n_aq) = accuracy.no_T.confusion{end}{:,:};
+                confusion.T_1(:,:,n_aq) = accuracy.T_1.confusion{end}{:,:};
+                confusion.T_2(:,:,n_aq) = accuracy.T_2.confusion{end}{:,:};
+            catch
+                %pass
+            end
+        
+            overall_acc.no_T = [overall_acc.no_T accuracy.no_T.overall(1:end-1)];
+            overall_acc.T_1 = [overall_acc.T_1 accuracy.T_1.overall(1:end-1)];
+            overall_acc.T_2 = [overall_acc.T_2 accuracy.T_2.overall(1:end-1)];
+        end
     end
+
+    no_T_confusion = sum(confusion.no_T,3);
+    no_T_confusion = no_T_confusion./sum(no_T_confusion(1,:));
+    
+    T_1_confusion = sum(confusion.T_1,3);
+    T_1_confusion = T_1_confusion./sum(T_1_confusion(1,:));
+    
+    T_2_confusion = sum(confusion.T_2,3);
+    T_2_confusion = T_2_confusion./sum(T_2_confusion(1,:));
+    
+    if subjects(n)~="h6" %excluding h6 because it wasnt in controll
+        no_T = [no_T overall_acc.no_T];
+        T_1 = [T_1 overall_acc.T_1];
+        T_2 = [T_2 overall_acc.T_2];
+    end
+    
+    % box plot
+    data_mat = [overall_acc.no_T', overall_acc.T_1', overall_acc.T_2'];
+    
+    if size(data_mat,1)>1
+        chart = "box";
+        dev_vect = std(data_mat);
+        mean_vect = mean(data_mat);
+    else
+        chart = "";
+        dev_vect = zeros(size(data_mat));
+        mean_vect = data_mat;
+    end
+    
+    base = [1,2,3]; 
+    
+    figure()
+    
+    if chart == "box"
+    
+        boxplot(data_mat, 'Labels',{'T_{off}', 'T_1', 'T_2'},'Widths', 0.3, 'OutlierSize', 6)
+        hold on
+        plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
+        plot(base,mean_vect,'o','MarkerFaceColor','k','MarkerSize',7)
+        
+    else
+        plot(base,mean_vect,'o','MarkerFaceColor','b','MarkerSize',7)
+        hold on
+        plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
+        plot([base(1),base(1)], [mean_vect(1)-dev_vect(1), mean_vect(1)+dev_vect(1)],'Color','k' ,'Marker','_','LineWidth',2)
+        plot([base(2),base(2)], [mean_vect(2)-dev_vect(2), mean_vect(2)+dev_vect(2)],'Color','k' ,'Marker','_','LineWidth',2)
+        plot([base(3),base(3)], [mean_vect(3)-dev_vect(3), mean_vect(3)+dev_vect(3)],'Color','k' ,'Marker','_','LineWidth',2)
+    
+    end
+    text(base(1),25,[num2str(mean_vect(1),'%.2f') ' \pm ' num2str(dev_vect(1),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+    text(base(2),25,[num2str(mean_vect(2),'%.2f') ' \pm ' num2str(dev_vect(2),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+    text(base(3),25,[num2str(mean_vect(3),'%.2f') ' \pm ' num2str(dev_vect(3),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+    hold off
+    
+    xlim([0.7 3.3])
+    xticks(base)
+    xticklabels({'$T_{off}$', '$T_1$', '$T_2$'})
+    set(gca, 'TickLabelInterpreter', 'latex')
+    
+    ylabel('Accuracy [%]')
+    xlabel('Modality')
+    ylim([0 100])
+    ax = gca;
+    ax.YGrid = 'on';
+    
+    title(upper(subjects(n)) + " Overall Accuracy")
+    
+    set(gca, 'FontSize',15,'LineWidth',2)
+    
+    % confusion matrix
+    
+    figure()
+    
+    sgtitle(upper(subjects(n))+" Confusion matrix")
+    colormap parula
+    
+    subplot(131)
+    
+        imagesc(no_T_confusion);
+        colorbar;
+        set(colorbar, 'Limits', [0, 1]);
+        
+        xlabel('Predicted Class');
+        ylabel('True Class');
+        title('T_{off}');
+        
+        [nRows, nCols] = size(no_T_confusion);
+        for i = 1:nRows
+            for j = 1:nCols
+                value = no_T_confusion(i, j);
+                % Adjust text color based on background intensity
+                if value > 0.5
+                    textColor = 'black';  % Light background, so use dark text
+                else
+                    textColor = 'white';  % Dark background, so use light text
+                end
+    
+                text(j, i, num2str(no_T_confusion(i, j)), ...
+                     'Color', textColor, 'FontSize', 14, ...
+                     'HorizontalAlignment', 'center', ...
+                     'VerticalAlignment', 'middle');
+            end
+        end
+        
+        set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
+        set(gca, 'XAxisLocation', 'top');
+        
+        set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
+             'YTickLabel', {'BF', 'Rest', 'BH'});
+        set(gca, 'FontSize',15,'LineWidth',2)
+    
+        
+        axis tight; 
+        axis square; 
+    
+    subplot(132)
+    
+        imagesc(T_1_confusion);
+        colorbar; 
+        set(colorbar, 'Limits', [0, 1]);
+        
+        xlabel('Predicted Class');
+        ylabel('True Class');
+        title('T_1');
+        
+        [nRows, nCols] = size(T_1_confusion);
+        for i = 1:nRows
+            for j = 1:nCols
+                value = T_1_confusion(i, j);
+                % Adjust text color based on background intensity
+                if value > 0.5
+                    textColor = 'black';  % Light background, so use dark text
+                else
+                    textColor = 'white';  % Dark background, so use light text
+                end
+    
+                text(j, i, num2str(T_1_confusion(i, j)), ...
+                     'Color', textColor, 'FontSize', 14, ...
+                     'HorizontalAlignment', 'center', ...
+                     'VerticalAlignment', 'middle');
+            end
+        end
+        
+        set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
+        set(gca, 'XAxisLocation', 'top');
+        
+        
+        set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
+             'YTickLabel', {'BF', 'Rest', 'BH'});
+        set(gca, 'FontSize',15,'LineWidth',2)
+    
+        
+        axis tight; 
+        axis square; 
+    
+    subplot(133)
+    
+        imagesc(T_2_confusion);
+        colorbar; 
+        set(colorbar, 'Limits', [0, 1]);
+        
+        
+        xlabel('Predicted Class');
+        ylabel('True Class');
+        title('T_2');
+        
+        
+        [nRows, nCols] = size(T_2_confusion);
+        for i = 1:nRows
+            for j = 1:nCols
+                value = T_2_confusion(i, j);
+                % Adjust text color based on background intensity
+                if value > 0.5
+                    textColor = 'black';  % Light background, so use dark text
+                else
+                    textColor = 'white';  % Dark background, so use light text
+                end
+                
+                text(j, i, num2str(T_2_confusion(i, j)), ...
+                     'Color', textColor, 'FontSize', 14, ...
+                     'HorizontalAlignment', 'center', ...
+                     'VerticalAlignment', 'middle');
+            end
+        end
+        
+        set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
+        set(gca, 'XAxisLocation', 'top');
+        
+        set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
+             'YTickLabel', {'BF', 'Rest', 'BH'});
+        set(gca, 'FontSize',15,'LineWidth',2)
+    
+        
+        axis tight;
+        axis square; 
 end
 
-% Adjust axis ticks
-set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
-set(gca, 'XAxisLocation', 'top');
+% mean among the subjects
+subject='Across Subjects';
+chart = "box";
 
-% Optionally, set tick labels
-set(gca, 'XTickLabel', {'771', 'Rest', '773', 'Miss'}, ...
-         'YTickLabel', {'771', 'Rest', '773'});
+data_mat = [no_T', T_1', T_2'];
+
+dev_vect = std(data_mat);
+mean_vect = mean(data_mat);
+
+
+base = [1,2,3]; 
+
+
+figure()
+if chart == "box"
+
+    boxplot(data_mat, 'Labels',{'T_{off}', 'T_1', 'T_2'},'Widths', 0.3, 'OutlierSize', 6)
+    hold on
+    plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
+    plot(base,mean_vect,'o','Color','k','MarkerFaceColor','k','MarkerSize',5)
+    
+else
+    plot(base,mean_vect,'o','MarkerFaceColor','b','MarkerSize',7)
+    hold on
+    plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
+    plot([base(1),base(1)], [mean_vect(1)-dev_vect(1), mean_vect(1)+dev_vect(1)],'Color','k' ,'Marker','_','LineWidth',2)
+    plot([base(2),base(2)], [mean_vect(2)-dev_vect(2), mean_vect(2)+dev_vect(2)],'Color','k' ,'Marker','_','LineWidth',2)
+    plot([base(3),base(3)], [mean_vect(3)-dev_vect(3), mean_vect(3)+dev_vect(3)],'Color','k' ,'Marker','_','LineWidth',2)
+   
+    
+
+end
+text(base(1),25,[num2str(mean_vect(1),'%.2f') ' \pm ' num2str(dev_vect(1),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+text(base(2),25,[num2str(mean_vect(2),'%.2f') ' \pm ' num2str(dev_vect(2),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+text(base(3),25,[num2str(mean_vect(3),'%.2f') ' \pm ' num2str(dev_vect(3),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+hold off
+
+xlim([0.7 3.3])
+xticklabels({'$T_{off}$', '$T_1$', '$T_2$'})
+set(gca, 'TickLabelInterpreter', 'latex')
+
+ylabel('Accuracy [%]')
+xlabel('Modality')
+ylim([0 100])
+ax = gca;
+ax.YGrid = 'on';
+
+title(subject + " Overall Accuracy")
+
 set(gca, 'FontSize',15,'LineWidth',2)
 
-% Set axis limits
-axis tight; % Adjust limits to fit the data
-axis square; % Make the axes equal in length
+%% Accuracy media per tutti i soggettti
 
-subplot(132)
-% Create a colored confusion matrix
-imagesc(t_1_mat);
-colormap(jet); % Choose a colormap, you can use 'hot', 'cool', etc.
-colorbar; % Optional: show a colorbar
-set(colorbar, 'Limits', [0, 1]);
+C7 = [51.66 58.33 68.61]';
+D6 = [56.01 54.22 75.41]';
+G2 = [50 47.92 69.59]';
+H5 = [25 63.33 63.33]';
+H6 = [33.33 33.33 33.33]';
+H7 = [51.67 61.67 81.67]';
 
-% Set the axis labels
-xlabel('Predicted Class');
-ylabel('True Class');
-title('T_1');
+data = [C7 D6 G2 H5 H6 H7];
 
-% Add text in the center of each square
-[nRows, nCols] = size(no_t_mat);
-for i = 1:nRows
-    for j = 1:nCols
-        % Calculate the position to place the text
-        text(j, i, num2str(t_1_mat(i, j)), ...
-             'Color', 'white', 'FontSize', 14, ...
-             'HorizontalAlignment', 'center', ...
-             'VerticalAlignment', 'middle');
-    end
-end
+base = [1 2 3];
 
-% Adjust axis ticks
-set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
-set(gca, 'XAxisLocation', 'top');
+figure()
 
-% Optionally, set tick labels
-set(gca, 'XTickLabel', {'771', 'Rest', '773', 'Miss'}, ...
-         'YTickLabel', {'771', 'Rest', '773'});
-set(gca, 'FontSize',15,'LineWidth',2)
-% Set axis limits
-axis tight; % Adjust limits to fit the data
-axis square; % Make the axes equal in length
+plot(base, data(:,1), 'LineStyle','--','LineWidth',2,'Color',[0, 0.4470, 0.7410],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0, 0.4470, 0.7410]);
+hold on
+plot(base, data(:,2), 'LineStyle','--','LineWidth',2,'Color',[0.8500, 0.3250, 0.0980],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0.8500, 0.3250, 0.0980]);
+plot(base, data(:,3), 'LineStyle','--','LineWidth',2,'Color',[0.3010, 0.7450, 0.9330],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0.3010, 0.7450, 0.9330]);
+plot(base, data(:,4), 'LineStyle','--','LineWidth',2,'Color',[0.4940, 0.1840, 0.5560],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0.4940, 0.1840, 0.5560]);
+plot(base, data(:,5), 'LineStyle','--','LineWidth',2,'Color',[0.4660, 0.6740, 0.1880],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0.4660, 0.6740, 0.1880]);
+plot(base, data(:,6), 'LineStyle','--','LineWidth',2,'Color',[0.6350, 0.0780, 0.1840],'Marker','o','MarkerSize',6,'MarkerFaceColor',[0.6350, 0.0780, 0.1840]);
+hold off
 
-subplot(133)
-% Create a colored confusion matrix
-imagesc(t_2_mat);
-colormap("jet"); % Choose a colormap, you can use 'hot', 'cool', etc.
-colorbar; % Optional: show a colorbar
-set(colorbar, 'Limits', [0, 1]);
+xlim([0.7, 3.3])
+ylim([0, 100])
+xticks(base)
+xticklabels({'T_{off}', 'T_1', 'T_2'})
+title('Overall Accuracy')
+legend('C7', 'D6', 'G2', 'H5', 'H6', 'H7')
+ax = gca;
+ax.YGrid = 'on';
+set(ax, 'FontSize',15,'LineWidth',2)
 
-% Set the axis labels
-xlabel('Predicted Class');
-ylabel('True Class');
-title('T_2');
+%% binary accuracy
+g2 = [72.5 85 80];
+d6 = [95 100 100];
+c7 = [90 75 87.5];
+h7 = [95];
 
-% Add text in the center of each square
-[nRows, nCols] = size(no_t_mat);
-for i = 1:nRows
-    for j = 1:nCols
-        % Calculate the position to place the text
-        text(j, i, num2str(t_2_mat(i, j)), ...
-             'Color', 'white', 'FontSize', 14, ...
-             'HorizontalAlignment', 'center', ...
-             'VerticalAlignment', 'middle');
-    end
-end
+disp(num2str(mean(c7))+"+-"+num2str(std(c7)))
+disp(num2str(mean(d6))+"+-"+num2str(std(d6)))
+disp(num2str(mean(g2))+"+-"+num2str(std(g2)))
 
-% Adjust axis ticks
-set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
-set(gca, 'XAxisLocation', 'top');
 
-% Optionally, set tick labels
-set(gca, 'XTickLabel', {'771', 'Rest', '773', 'Miss'}, ...
-         'YTickLabel', {'771', 'Rest', '773'});
-set(gca, 'FontSize',15,'LineWidth',2)
-% Set axis limits
-axis tight; % Adjust limits to fit the data
-axis square; % Make the axes equal in length
-
-end
 
