@@ -55,6 +55,8 @@ function [] = HMM_report(folder_path, show)
     f = 16;%Hz
 
     ref_idx = 2; %output del classificatore 773,771 classe di riferimento 771
+
+    edges = [0:0.025:1];
     
     %% load classifier (binary classifier)
     root = [folder_path '/'];
@@ -172,9 +174,10 @@ function [] = HMM_report(folder_path, show)
             sgtitle('Data distribution Calibration - HMM state')
             
             subplot(131)
-            histogram(raw_prob_cal(data_cal.label==task(2),ref_idx),100,'Normalization',"probability",'FaceColor',"#0072BD")
+            histogram(raw_prob_cal(data_cal.label==task(2),ref_idx),edges,'Normalization',"probability",'FaceColor',"#0072BD")
             hold on
             plot(base,bf.hmm_state,'b-','LineWidth',2)
+            hold off
             grid on
             title('Both Feet')
             ylim(y_lim)
@@ -183,9 +186,10 @@ function [] = HMM_report(folder_path, show)
             set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(132)
-            histogram(raw_prob_cal(data_cal.label==CODE.Rest,ref_idx),100,'Normalization',"probability",'FaceColor',"#77AC30")
+            histogram(raw_prob_cal(data_cal.label==CODE.Rest,ref_idx),edges,'Normalization',"probability",'FaceColor',"#77AC30")
             hold on
             plot(base,rest.hmm_state,'g-','LineWidth',2)
+            hold off
             grid on
             title('Rest')
             ylim(y_lim)
@@ -194,9 +198,10 @@ function [] = HMM_report(folder_path, show)
             set(gca, 'FontSize',15,'LineWidth',2)
 
             subplot(133)
-            histogram(raw_prob_cal(data_cal.label==task(1),ref_idx),100,'Normalization',"probability",'FaceColor',"#D95319")
+            histogram(raw_prob_cal(data_cal.label==task(1),ref_idx),edges,'Normalization',"probability",'FaceColor',"#D95319")
             hold on
             plot(base,bh.hmm_state,'r-','LineWidth',2)
+            hold off
             grid on
             title('Both Hands')
             ylim(y_lim)
@@ -264,9 +269,10 @@ function [] = HMM_report(folder_path, show)
             figure(4)
             sgtitle('Data distribution Evaluation')
             subplot(121)
-            histogram(raw_prob_eval(data_eval.label==task(2),ref_idx),100,'Normalization',"probability",'FaceColor',"#0072BD")
+            histogram(raw_prob_eval(data_eval.label==task(2),ref_idx),edges,'Normalization',"probability",'FaceColor',"#0072BD")
             hold on
             plot(base,bf.hmm_state,'b-','LineWidth',2)
+            hold off
             grid on
             title('Both Feet')
             ylim(y_lim)
@@ -275,9 +281,10 @@ function [] = HMM_report(folder_path, show)
             set(gca, 'FontSize',15,'LineWidth',2)
         
             subplot(122)
-            histogram(raw_prob_eval(data_eval.label==task(1),ref_idx),100,'Normalization',"probability",'FaceColor',"#D95319")
+            histogram(raw_prob_eval(data_eval.label==task(1),ref_idx),edges,'Normalization',"probability",'FaceColor',"#D95319")
             hold on
             plot(base,bh.hmm_state,'r-','LineWidth',2)
+            hold off
             grid on
             title('Both Hands')
             ylim(y_lim)
@@ -556,9 +563,10 @@ function [] = HMM_report(folder_path, show)
                     figure(win_count)
                     sgtitle(join(['Evaluation mode: ',keyWords.eval_T(mode),' hmm state']))
                     subplot(131)
-                    histogram(smr_out(data.label==classes(1),ref_idx),100,'Normalization',"probability",'FaceColor',"#0072BD")
+                    histogram(smr_out(data.label==classes(1),ref_idx),edges,'Normalization',"probability",'FaceColor',"#0072BD")
                     hold on
                     plot(base,bf.hmm_state,'b-','LineWidth',2)
+                    hold off
                     grid on
                     title('Both Feet')
                     ylim(y_lim)
@@ -567,9 +575,10 @@ function [] = HMM_report(folder_path, show)
                     set(gca, 'FontSize',15,'LineWidth',2)
                     
                     subplot(132)
-                    histogram(smr_out(data.label==classes(2),ref_idx),100,'Normalization',"probability",'FaceColor',"#77AC30")
+                    histogram(smr_out(data.label==classes(2),ref_idx),edges,'Normalization',"probability",'FaceColor',"#77AC30")
                     hold on
                     plot(base,rest.hmm_state,'g-','LineWidth',2)
+                    hold off
                     grid on
                     title('Rest')
                     ylim(y_lim)
@@ -578,9 +587,10 @@ function [] = HMM_report(folder_path, show)
                     set(gca, 'FontSize',15,'LineWidth',2)
 
                     subplot(133)
-                    histogram(smr_out(data.label==classes(3),ref_idx),100,'Normalization',"probability",'FaceColor',"#D95319")
+                    histogram(smr_out(data.label==classes(3),ref_idx),edges,'Normalization',"probability",'FaceColor',"#D95319")
                     hold on
                     plot(base,bh.hmm_state,'r-','LineWidth',2)
+                    hold off
                     grid on
                     title('Both Hands')
                     ylim(y_lim)

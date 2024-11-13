@@ -1,5 +1,6 @@
 clear all
 close all
+clc
 
 root_folder = "/home/sebastiano/Desktop/Data";
 subjects = ["c7", "d6", "g2", "h7", "h5", "h6"];
@@ -26,7 +27,8 @@ for n = 1:length(subjects)
     
     file_found = false;
     n_aq = 0;
-    
+
+    % collecting data from the acquisitions
     for k = 3:length(content) %skip . and ..
         if isfolder(subject_folder+'/'+content(k).name)
             try
@@ -69,6 +71,7 @@ for n = 1:length(subjects)
     T_2_confusion = sum(confusion.T_2,3);
     T_2_confusion = T_2_confusion./sum(T_2_confusion(1,:));
     
+    % collecting data for all the subgects
     if subjects(n)~="h6" %excluding h6 because it wasnt in controll
         no_T = [no_T overall_acc.no_T];
         T_1 = [T_1 overall_acc.T_1];
@@ -132,14 +135,14 @@ for n = 1:length(subjects)
     
     figure()
     
-    sgtitle(upper(subjects(n))+" Confusion matrix")
+    sgtitle(upper(subjects(n))+" Confusion Matrix")
     colormap parula
     
     subplot(131)
     
         imagesc(no_T_confusion);
-        colorbar;
-        set(colorbar, 'Limits', [0, 1]);
+        colorbar off;
+        clim([0, 1]);
         
         xlabel('Predicted Class');
         ylabel('True Class');
@@ -156,8 +159,8 @@ for n = 1:length(subjects)
                     textColor = 'white';  % Dark background, so use light text
                 end
     
-                text(j, i, num2str(no_T_confusion(i, j)), ...
-                     'Color', textColor, 'FontSize', 14, ...
+                text(j, i, num2str(round(no_T_confusion(i, j),2)), ...
+                     'Color', textColor, 'FontSize', 18, ...
                      'HorizontalAlignment', 'center', ...
                      'VerticalAlignment', 'middle');
             end
@@ -168,7 +171,7 @@ for n = 1:length(subjects)
         
         set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
              'YTickLabel', {'BF', 'Rest', 'BH'});
-        set(gca, 'FontSize',15,'LineWidth',2)
+        set(gca, 'FontSize',18,'LineWidth',2)
     
         
         axis tight; 
@@ -177,8 +180,8 @@ for n = 1:length(subjects)
     subplot(132)
     
         imagesc(T_1_confusion);
-        colorbar; 
-        set(colorbar, 'Limits', [0, 1]);
+        colorbar off; 
+        clim([0, 1]);
         
         xlabel('Predicted Class');
         ylabel('True Class');
@@ -195,8 +198,8 @@ for n = 1:length(subjects)
                     textColor = 'white';  % Dark background, so use light text
                 end
     
-                text(j, i, num2str(T_1_confusion(i, j)), ...
-                     'Color', textColor, 'FontSize', 14, ...
+                text(j, i, num2str(round(T_1_confusion(i, j),2)), ...
+                     'Color', textColor, 'FontSize', 18, ...
                      'HorizontalAlignment', 'center', ...
                      'VerticalAlignment', 'middle');
             end
@@ -208,7 +211,7 @@ for n = 1:length(subjects)
         
         set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
              'YTickLabel', {'BF', 'Rest', 'BH'});
-        set(gca, 'FontSize',15,'LineWidth',2)
+        set(gca, 'FontSize',18,'LineWidth',2)
     
         
         axis tight; 
@@ -217,8 +220,10 @@ for n = 1:length(subjects)
     subplot(133)
     
         imagesc(T_2_confusion);
-        colorbar; 
-        set(colorbar, 'Limits', [0, 1]);
+        clim([0, 1]);
+
+        cb = colorbar; 
+        set(cb, 'Position', [0.92 0.287 0.02 0.461])
         
         
         xlabel('Predicted Class');
@@ -237,8 +242,8 @@ for n = 1:length(subjects)
                     textColor = 'white';  % Dark background, so use light text
                 end
                 
-                text(j, i, num2str(T_2_confusion(i, j)), ...
-                     'Color', textColor, 'FontSize', 14, ...
+                text(j, i, num2str(round(T_2_confusion(i, j),2)), ...
+                     'Color', textColor, 'FontSize', 18, ...
                      'HorizontalAlignment', 'center', ...
                      'VerticalAlignment', 'middle');
             end
@@ -249,7 +254,7 @@ for n = 1:length(subjects)
         
         set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
              'YTickLabel', {'BF', 'Rest', 'BH'});
-        set(gca, 'FontSize',15,'LineWidth',2)
+        set(gca, 'FontSize',18,'LineWidth',2)
     
         
         axis tight;
@@ -272,10 +277,11 @@ base = [1,2,3];
 figure()
 if chart == "box"
 
-    boxplot(data_mat, 'Labels',{'T_{off}', 'T_1', 'T_2'},'Widths', 0.3, 'OutlierSize', 6)
+    h = boxplot(data_mat, 'Labels',{'T_{off}', 'T_1', 'T_2'},'Widths', 0.3, 'OutlierSize', 6);
+    set(h,'LineWidth',2)
     hold on
-    plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2,'LineStyle',':')
-    plot(base,mean_vect,'o','Color','k','MarkerFaceColor','k','MarkerSize',5)
+    plot(base,mean_vect,'Color',[0.5 0.5 0.5], 'LineWidth',2.5,'LineStyle',':')
+    plot(base,mean_vect,'o','Color','k','MarkerFaceColor','k','MarkerSize',7)
     
 else
     plot(base,mean_vect,'o','MarkerFaceColor','b','MarkerSize',7)
@@ -288,14 +294,14 @@ else
     
 
 end
-text(base(1),25,[num2str(mean_vect(1),'%.2f') ' \pm ' num2str(dev_vect(1),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
-text(base(2),25,[num2str(mean_vect(2),'%.2f') ' \pm ' num2str(dev_vect(2),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
-text(base(3),25,[num2str(mean_vect(3),'%.2f') ' \pm ' num2str(dev_vect(3),'%.2f') ],'FontSize',16,'HorizontalAlignment', 'center')
+text(base(1),25,[num2str(mean_vect(1),'%.2f') ' \pm ' num2str(dev_vect(1),'%.2f') ],'FontSize',20,'HorizontalAlignment', 'center','FontWeight','bold')
+text(base(2),25,[num2str(mean_vect(2),'%.2f') ' \pm ' num2str(dev_vect(2),'%.2f') ],'FontSize',20,'HorizontalAlignment', 'center','FontWeight','bold')
+text(base(3),25,[num2str(mean_vect(3),'%.2f') ' \pm ' num2str(dev_vect(3),'%.2f') ],'FontSize',20,'HorizontalAlignment', 'center','FontWeight','bold')
 hold off
 
 xlim([0.7 3.3])
-xticklabels({'$T_{off}$', '$T_1$', '$T_2$'})
-set(gca, 'TickLabelInterpreter', 'latex')
+xticklabels({'\bf \it T_{off}', '\bf \it T_1', '\bf \it T_2'})
+set(gca, 'TickLabelInterpreter', 'tex')
 
 ylabel('Accuracy [%]')
 xlabel('Modality')
@@ -305,7 +311,46 @@ ax.YGrid = 'on';
 
 title(subject + " Overall Accuracy")
 
-set(gca, 'FontSize',15,'LineWidth',2)
+set(gca, 'FontSize',25,'LineWidth',2)
+
+% statistical test between the accuracy
+
+disp('T_{off} - T_1')
+[h, p, ~, ~] = ttest(no_T, T_1,'Alpha',0.05,'Tail','both');
+
+% Display results
+disp(['Hypothesis test result: ', num2str(h)]);
+if h==1
+    disp('Null hypotesis rejected --> the distributions are different')
+else
+    disp('Null hypotesis accepted --> the distributions are the same')
+end
+disp(['P-value: ', num2str(p)]);
+
+disp('T_{off} - T_2')
+[h, p, ~, ~] = ttest(no_T, T_2,'Alpha',0.05,'Tail','both');
+
+% Display results
+disp(['Hypothesis test result: ', num2str(h)]);
+if h==1
+    disp('Null hypotesis rejected --> the distributions are different')
+else
+    disp('Null hypotesis accepted --> the distributions are the same')
+end
+disp(['P-value: ', num2str(p)]);
+
+disp('T_1 - T_2')
+[h, p, ~, ~] = ttest(T_1, T_2,'Alpha',0.05,'Tail','both');
+
+% Display results
+disp(['Hypothesis test result: ', num2str(h)]);
+if h==1
+    disp('Null hypotesis rejected --> the distributions are different')
+else
+    disp('Null hypotesis accepted --> the distributions are the same')
+end
+disp(['P-value: ', num2str(p)]);
+
 
 %% Accuracy media per tutti i soggettti
 
@@ -351,5 +396,73 @@ disp(num2str(mean(c7))+"+-"+num2str(std(c7)))
 disp(num2str(mean(d6))+"+-"+num2str(std(d6)))
 disp(num2str(mean(g2))+"+-"+num2str(std(g2)))
 
+%%
+idx = 6;
 
+%c7
+no_T_mat(:,:,1)=[10 6 2 2;
+                3 3 0 14;
+                0 0 19 1];
+%d6
+no_T_mat(:,:,2) = [19 1 0 0;
+                    9 1 0 10;
+                    0 3 17 0];
+%g2
+no_T_mat(:,:,3) = [17 3 0 0;
+                    1 9 1 9;
+                    0 11 5 4];
+%h5
+no_T_mat(:,:,4) = [10 9 0 1;
+                    13 5 0 2;
+                    6 14 0 0];
+%h6
+no_T_mat(:,:,5)=[0 10 0 0;
+                0 10 0 0;
+                0 10 0 0];
+%H7
+no_T_mat(:,:,6)= [15 5 0 0;
+                    8 8 2 2;
+                    0 12 8 0];
+
+no_T_confusion = no_T_mat(:,:,idx);
+
+figure()
+
+subplot(131)
+imagesc(no_T_confusion);
+colorbar off;
+clim([0, 20]);
+
+xlabel('Predicted Class');
+ylabel('True Class');
+title('T_{off}');
+
+[nRows, nCols] = size(no_T_confusion);
+for i = 1:nRows
+    for j = 1:nCols
+        value = no_T_confusion(i, j);
+        % Adjust text color based on background intensity
+        if value > 0.5
+            textColor = 'black';  % Light background, so use dark text
+        else
+            textColor = 'white';  % Dark background, so use light text
+        end
+
+        text(j, i, num2str(round(no_T_confusion(i, j),2)), ...
+             'Color', textColor, 'FontSize', 18, ...
+             'HorizontalAlignment', 'center', ...
+             'VerticalAlignment', 'middle');
+    end
+end
+
+set(gca, 'XTick', 1:nCols, 'YTick', 1:nRows);
+set(gca, 'XAxisLocation', 'top');
+
+set(gca, 'XTickLabel', {'BF', 'Rest', 'BH', 'Miss'}, ...
+     'YTickLabel', {'BF', 'Rest', 'BH'});
+set(gca, 'FontSize',18,'LineWidth',2)
+
+
+axis tight; 
+axis square; 
 
